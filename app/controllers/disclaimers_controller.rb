@@ -94,9 +94,18 @@ class DisclaimersController < ApplicationController
     @disclaimer = current_user.disclaimers.find(params[:id])
 
     if @disclaimer.update(disclaimer_params)
-      render json: @disclaimer 
+
+      respond_to do |format|
+        format.turbo_stream {redirect_to dashboard_path, status: :see_other}
+        format.html {redirect_to dashboard_path, notice: "Disclaimer Updated"}
+      end
     else
-      render json: @disclaimer.errors, status: :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream {render :edit, status: :unprocessable_entity}
+        format.html {render :edit, status: :unprocessable_entity}
+      end
+
+
     end
 
 
