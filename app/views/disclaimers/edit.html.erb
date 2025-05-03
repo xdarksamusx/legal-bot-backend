@@ -1,0 +1,24 @@
+<h1>Edit Disclaimer</h1>
+<%= form_with model: @disclaimer, local: true do |f| %>
+  <table>
+    <tr>
+      <td><%= f.label :topic %> :</td>
+      <td><%= f.text_field :topic %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :tone %>:</td>
+      <td><%= f.text_field :tone %></td>
+    </tr>
+    <tr>
+      <td colspan="2"><%= f.label :statement %>:</td>
+    </tr>
+    <tr>
+      <td colspan="2"><%= f.text_area :statement, rows: 10, cols: 80 %></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><%= f.submit "Update Disclaimer" %></td>
+    </tr>
+  </table>
+  <%= link_to "Dashboard", dashboard_path if user_signed_in? %>
+<% end %>
