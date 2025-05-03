@@ -1,0 +1,22 @@
+<h1>Disclaimers</h1>
+<% if user_signed_in?%>
+  <%= form_with model: @disclaimer, url: disclaimers_path, local: true do |f| %>
+    <div>
+      <%= f.label :topic %>
+      <%= f.text_field :topic %>
+    </div>
+    <div>
+      <%= f.label :tone %>
+      <%= f.text_field :tone %>
+    </div>
+    <div>
+      <%= f.submit "Generate" %>
+    </div>
+    <%if @latest_disclaimer&.statement.present?%>
+      <h3> Generated Disclaimer:</h3>
+      <p><%= @latest_disclaimer.statement%></p>
+    <%end%>
+  <% end %>  <%= link_to "Sign Out", destroy_user_session_path, data: { turbo_method: :delete } %>
+<% else %>
+  <%= link_to "Login", new_user_session_path%>
+<%end%>
