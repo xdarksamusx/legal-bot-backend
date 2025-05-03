@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   get "home/index"
   resources :disclaimers
-  get '/dashboard', to: 'users#dashboard'
+  get '/dashboard', to: 'dashboard#index'
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

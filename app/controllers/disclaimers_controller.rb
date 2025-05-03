@@ -21,7 +21,7 @@ class DisclaimersController < ApplicationController
   end
 
   def show
-    @disclaimer = Disclaimer.find(params[:id])
+    @disclaimer = current_user.disclaimers.find(params[:id])
 
     respond_to do |format|
     format.html 
@@ -79,14 +79,19 @@ class DisclaimersController < ApplicationController
 
 
   def edit
-    @disclaimer = disclaimer.find(params[:id])
+    @disclaimer = current_user.disclaimers.find(params[:id])
+
+    respond_to do |format|
+      format.html # 
+      format.json { render json: @disclaimer }
+    end
 
  
   end
 
 
   def update
-    @disclaimer = Disclaimer.find(params[:id])
+    @disclaimer = current_user.disclaimers.find(params[:id])
 
     if @disclaimer.update(disclaimer_params)
       render json: @disclaimer 
@@ -103,11 +108,15 @@ class DisclaimersController < ApplicationController
 
 
   def destroy
-    @disclaimer = Disclaimer.find(params[:id])
+    @disclaimer = current_user.disclaimers.find(params[:id])
 
     @disclaimer.destroy 
 
-    head :no_content
+    respond_to do |format|
+      format.turbo_stream {redirect_to dashboard_path, status: :see_other}
+      format.html {redirect_to dashboard_path, status:  :see_other}
+    end
+ 
 
 
   end
