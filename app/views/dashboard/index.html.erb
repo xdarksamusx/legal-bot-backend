@@ -13,3 +13,5 @@
   <%= link_to "Edit Disclaimer", edit_disclaimer_path(disclaimer), method: :update   %>
   <hr>
 <%end%>
+<%= link_to "Home", root_path %>
+<% link_to "Sign Out", destroy_user_session_path, method: :delete %>
