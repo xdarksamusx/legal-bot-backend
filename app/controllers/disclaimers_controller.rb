@@ -8,7 +8,7 @@ class DisclaimersController < ApplicationController
   def index
     @disclaimer = Disclaimer.new
 
-    @disclaimers = Disclaimer.all
+    @disclaimers = current_user.disclaimers
 
     @latest_disclaimer = Disclaimer.order(created_at: :desc).first
 
