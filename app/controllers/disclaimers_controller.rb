@@ -130,6 +130,37 @@ class DisclaimersController < ApplicationController
 
   end
 
+
+  def download_pdf
+    @disclaimer = current_user.disclaimers.find(params[:id])
+    pdf = Prawn::Document.new
+    pdf.text @disclaimer.statement
+    send_data pdf.render,
+              filename: "disclaimer_#{@disclaimer.id}.pdf",
+              type: "application/pdf",
+              disposition: "attachment"
+  end
+
+
+  def download_text_file
+
+    @disclaimer = current_user.disclaimers.find(params[:id])
+    text = <<~TEXT
+    Topic: #{@disclaimer.topic}
+    Tone: #{@disclaimer.tone}
+    Statement: #{@disclaimer.statement}
+  TEXT
+
+  send_data text,
+  filename: "disclaimer_#{@disclaimer.id}.txt",
+  type: "text/plain",
+  disposition: "attachment"
+
+  end
+
+
+
+
   private
 
   def disclaimer_params
