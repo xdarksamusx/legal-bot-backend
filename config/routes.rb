@@ -15,8 +15,7 @@ Rails.application.routes.draw do
     end
   end
 
-=======
-  # get "/users/current", to: "users#current"
+   # get "/users/current", to: "users#current"
 
   namespace :api do 
     post 'generate_disclaimer', to: 'openai#generate'

@@ -96,11 +96,15 @@ class DisclaimersController < ApplicationController
     if @disclaimer.update(disclaimer_params)
 
       respond_to do |format|
+        format.json { render json: @disclaimer }
+
         format.turbo_stream {redirect_to dashboard_path, status: :see_other}
         format.html {redirect_to dashboard_path, notice: "Disclaimer Updated"}
       end
     else
       respond_to do |format|
+        format.json { render json: @disclaimer.errors, status: :unprocessable_entity }
+
         format.turbo_stream {render :edit, status: :unprocessable_entity}
         format.html {render :edit, status: :unprocessable_entity}
       end
