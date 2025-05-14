@@ -2,12 +2,8 @@
 <%= form_with model: @disclaimer, local: true do |f| %>
   <table>
     <tr>
-      <td><%= f.label :topic %> :</td>
-      <td><%= f.text_field :topic %></td>
-    </tr>
-    <tr>
-      <td><%= f.label :tone %>:</td>
-      <td><%= f.text_field :tone %></td>
+      <td><%= f.label :message %> :</td>
+      <td><%= f.text_field :message %></td>
     </tr>
     <tr>
       <td colspan="2"><%= f.label :statement %>:</td>
