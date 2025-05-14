@@ -41,15 +41,13 @@ class DisclaimersController < ApplicationController
 
 
  
-    prompt = "Write a legal disclaimer about #{params[:disclaimer][:topic]} in a #{params[:disclaimer][:tone]} tone."
+    prompt = "Write a legal disclaimer about #{params[:disclaimer][:message]}."
     client = OpenAI::Client.new(access_token: ENV['OPENAI_API_KEY'])
 
     response = client.chat(
       parameters: {
         model: "gpt-4o-mini",
-        messages: [
-          { role: "user", content: prompt }
-        ],
+        messages: params[:disclaimer][:message],
         temperature: 0.7
       }
     )
@@ -150,8 +148,7 @@ class DisclaimersController < ApplicationController
 
     @disclaimer = current_user.disclaimers.find(params[:id])
     text = <<~TEXT
-    Topic: #{@disclaimer.topic}
-    Tone: #{@disclaimer.tone}
+    Prompt: #{@disclaimer.message}
     Statement: #{@disclaimer.statement}
   TEXT
 
@@ -168,7 +165,7 @@ class DisclaimersController < ApplicationController
   private
 
   def disclaimer_params
-    params.require(:disclaimer).permit(:statement, :topic, :tone)
+    params.require(:disclaimer).permit(message: [:role, :content])
     
   end
 

@@ -1,19 +1,16 @@
 <h1>Your Discalimers </h1>
 <% @disclaimers.each do |disclaimer|%>
   <div>
-    <strong> <%= disclaimer.topic %><br>
-    </strong>
-    <strong> <%= disclaimer.tone %><br>
-    </strong>
-    <strong>Statement:</strong>
-    <p> <%= disclaimer.statement%>  </p>
-  </div>
-  <%= link_to "View Disclaimer", disclaimer_path(disclaimer) %>
-  <%= link_to "Donwload PDF", download_pdf_disclaimer_path(disclaimer)%>
-  <%= link_to "Donwload Text", download_text_file_disclaimer_path(disclaimer)%>
-  <%= link_to "Delete Disclaimer", disclaimer_path(disclaimer), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %>
-  <%= link_to "Edit Disclaimer", edit_disclaimer_path(disclaimer), method: :update   %>
-  <hr>
-<%end%>
-<%= link_to "Home", root_path %>
-<% link_to "Sign Out", destroy_user_session_path, method: :delete,  data: { turbo_method: :delete } %>
+    <strong> <%= disclaimer.message %><br>
+      <strong>Statement:</strong>
+      <p> <%= disclaimer.statement%>  </p>
+    </div>
+    <%= link_to "View Disclaimer", disclaimer_path(disclaimer) %>
+    <%= link_to "Donwload PDF", download_pdf_disclaimer_path(disclaimer)%>
+    <%= link_to "Donwload Text", download_text_file_disclaimer_path(disclaimer)%>
+    <%= link_to "Delete Disclaimer", disclaimer_path(disclaimer), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %>
+    <%= link_to "Edit Disclaimer", edit_disclaimer_path(disclaimer), method: :update   %>
+    <hr>
+  <%end%>
+  <%= link_to "Home", root_path %>
+  <% link_to "Sign Out", destroy_user_session_path, method: :delete,  data: { turbo_method: :delete } %>

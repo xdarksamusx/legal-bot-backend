@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "home/index"
+  get "/check", to: "home#check"
   resources :disclaimers
   get '/dashboard', to: 'dashboard#index'
   devise_for :users

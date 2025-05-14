@@ -2,12 +2,8 @@
 <% if user_signed_in?%>
   <%= form_with model: @disclaimer, url: disclaimers_path, local: true do |f| %>
     <div>
-      <%= f.label :topic %>
-      <%= f.text_field :topic %>
-    </div>
-    <div>
-      <%= f.label :tone %>
-      <%= f.text_field :tone %>
+      <%= f.label :message %>
+      <%= f.text_field :message %>
     </div>
     <div>
       <%= f.submit "Generate" %>
