@@ -36,7 +36,14 @@ class DisclaimersController < ApplicationController
   end
 
   def create
-    @disclaimer = Disclaimer.new(disclaimer_params)
+
+    disclaimer_id = params[:disclaimer_id]
+    existing = disclaimer_id.present? ? Disclaimer.find_by(id:disclaimer_id) : nil
+
+  puts "Full incoming params: #{params.inspect}"
+
+
+    @disclaimer =  existing ||  Disclaimer.new(disclaimer_params)
     @disclaimer.user = current_user
 
 
@@ -44,19 +51,59 @@ class DisclaimersController < ApplicationController
     prompt = "Write a legal disclaimer about #{params[:disclaimer][:message]}."
     client = OpenAI::Client.new(access_token: ENV['OPENAI_API_KEY'])
 
+    user_input = params[:disclaimer][:message]
+
+    user_message =
+    if user_input.is_a?(Array)
+      user_input  
+    else
+      [ { role: "user", content: user_input } ]
+    end
+
+    chat_history = existing&.chat_history || [
+      { role: "system", content: "You are a helpful legal bot." }
+    ]
+
+    messages = chat_history + user_message
+
+
+
     response = client.chat(
       parameters: {
         model: "gpt-4o-mini",
-        messages: params[:disclaimer][:message],
+        messages: messages,
         temperature: 0.7
       }
     )
 
-    generated_statement = response.dig("choices", 0, "message", "content").truncate(1000, separator: ' ')
+    generated_statement = response.dig("choices", 0, "message", "content").truncate(3000, separator: ' ')
+
+
+
+    assistant_message = {
+  role: "assistant",
+  content: generated_statement
+}
+
+
+full_history = messages + [assistant_message]
+
+@disclaimer.chat_history = full_history
+
+
+@disclaimer.message = user_message
+
+
 
     @disclaimer.statement = generated_statement
 
+ 
 
+  
+    
+
+ 
+    
 
 
  
@@ -165,10 +212,16 @@ class DisclaimersController < ApplicationController
   private
 
   def disclaimer_params
-    params.require(:disclaimer).permit(message: [:role, :content])
-    
+    params.require(:disclaimer).permit(
+      :topic,
+      :tone,
+      :prompt,
+      :statement,
+      message: [:role, :content],
+      chat_history: [:role, :content]
+    )
   end
-
+  
 
 
 
