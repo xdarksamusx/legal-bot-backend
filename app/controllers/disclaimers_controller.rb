@@ -61,7 +61,7 @@ class DisclaimersController < ApplicationController
     end
 
     chat_history = existing&.chat_history || [
-      { role: "system", content: "You are a helpful legal bot." }
+      { role: "system", content: "Please type a response t" }
     ]
 
     messages = chat_history + user_message
