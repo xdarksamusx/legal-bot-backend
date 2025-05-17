@@ -40,8 +40,7 @@ class DisclaimersController < ApplicationController
     disclaimer_id = params[:disclaimer_id]
     existing = disclaimer_id.present? ? Disclaimer.find_by(id:disclaimer_id) : nil
 
-  puts "Full incoming params: #{params.inspect}"
-
+ 
 
     @disclaimer =  existing ||  Disclaimer.new(disclaimer_params)
     @disclaimer.user = current_user
@@ -61,7 +60,7 @@ class DisclaimersController < ApplicationController
     end
 
     chat_history = existing&.chat_history || [
-      { role: "system", content: "Please type a response t" }
+      { role: "system", content: "Please type a response " }
     ]
 
     messages = chat_history + user_message
@@ -175,6 +174,63 @@ full_history = messages + [assistant_message]
       format.html {redirect_to dashboard_path, status:  :see_other}
     end
  
+
+
+  end
+
+  def continue 
+    @disclaimer = current_user.disclaimers.find(params[:id])
+
+    prompt = "Write a legal disclaimer about #{params[:disclaimer][:message]}."
+
+    user_input = params[:disclaimer][:message]
+    client = OpenAI::Client.new(access_token: ENV['OPENAI_API_KEY'])
+
+
+    user_message =
+    if user_input.is_a?(Array)
+      user_input  
+    else
+      [ { role: "user", content: user_input } ]
+    end
+
+    chat_history = @disclaimer.chat_history || [    ]
+    messages = chat_history + user_message
+
+
+
+    response = client.chat(
+      parameters: {
+        model: "gpt-4o-mini",
+        messages: messages,
+        temperature: 0.7
+      }
+    )
+
+    generated_statement = response.dig("choices", 0, "message", "content").truncate(3000, separator: ' ')
+
+
+
+    assistant_message = {
+  role: "assistant",
+  content: generated_statement
+}
+
+
+full_history = messages + [assistant_message]
+
+@disclaimer.chat_history = full_history
+
+
+ 
+@disclaimer.statement = generated_statement
+
+
+@disclaimer.save!
+render json: @disclaimer, status: :ok 
+
+
+
 
 
   end
