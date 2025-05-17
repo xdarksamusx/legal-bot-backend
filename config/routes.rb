@@ -11,6 +11,14 @@ Rails.application.routes.draw do
 
   resources :disclaimers do 
     member do 
+      patch :continue
+
+    end
+  end
+
+
+  resources :disclaimers do 
+    member do 
       get :download_pdf
       get :download_text_file
     end

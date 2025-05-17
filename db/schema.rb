@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_13_164028) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_15_135002) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+
   create_table "disclaimers", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -19,7 +22,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_13_164028) do
     t.string "tone"
     t.string "topic"
     t.string "prompt"
-    t.string "message"
+    t.json "chat_history", default: [], null: false
+    t.jsonb "message", default: {}, null: false
     t.index ["user_id"], name: "index_disclaimers_on_user_id"
   end
 

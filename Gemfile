@@ -50,6 +50,10 @@ gem 'dotenv-rails'
 
 gem 'prawn'
 
+gem 'pg'
+
+ 
+
 
 group :development do
   gem 'letter_opener'

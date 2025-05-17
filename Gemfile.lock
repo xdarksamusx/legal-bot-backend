@@ -229,6 +229,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pdf-core (0.10.0)
+    pg (1.5.9)
     pp (0.6.2)
       prettyprint
     prawn (2.5.0)
@@ -426,6 +427,7 @@ DEPENDENCIES
   jbuilder
   kamal
   letter_opener
+  pg
   prawn
   propshaft
   puma (>= 5.0)
