@@ -51,8 +51,13 @@ class DisclaimersController < ApplicationController
     client = OpenAI::Client.new(access_token: ENV['OPENAI_API_KEY'])
 
     raw_message_array = params[:disclaimer][:message]
-user_input = raw_message_array.reverse.find { |m| m["role"] == "user" || m[:role] == "user" }&.dig("content") || ""
 
+    if raw_message_array.is_a?(Array)
+      user_input = raw_message_array.reverse.find { |m| m["role"] == "user" || m[:role] == "user" }&.dig("content") || ""
+    else
+      user_input = raw_message_array
+    end
+ 
  
 
 prompt = "Write a professional legal disclaimer about this topic: #{user_input}. Focus on legal obligations, risks, responsibilities, and safety language."
