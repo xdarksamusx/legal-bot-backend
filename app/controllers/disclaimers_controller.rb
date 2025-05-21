@@ -47,21 +47,22 @@ class DisclaimersController < ApplicationController
 
 
  
-    prompt = "Write a legal disclaimer about #{params[:disclaimer][:message]}."
+
     client = OpenAI::Client.new(access_token: ENV['OPENAI_API_KEY'])
 
-    user_input = params[:disclaimer][:message]
+    raw_message_array = params[:disclaimer][:message]
+user_input = raw_message_array.reverse.find { |m| m["role"] == "user" || m[:role] == "user" }&.dig("content") || ""
 
-    user_message =
-    if user_input.is_a?(Array)
-      user_input  
-    else
-      [ { role: "user", content: user_input } ]
-    end
+ 
 
-    chat_history = existing&.chat_history || [
-      { role: "system", content: "Please type a response " }
-    ]
+prompt = "Write a professional legal disclaimer about this topic: #{user_input}. Focus on legal obligations, risks, responsibilities, and safety language."
+
+
+user_message = [{ role: "user", content: prompt }]
+
+chat_history = existing&.chat_history || [
+  { role: "system", content: "You are a legal assistant bot. Only write compliance-based disclaimers using legal tone and risk language." }
+]
 
     messages = chat_history + user_message
 
