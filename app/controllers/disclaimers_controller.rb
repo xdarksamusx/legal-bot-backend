@@ -245,12 +245,22 @@ render json: @disclaimer, status: :ok
   def download_pdf
     @disclaimer = current_user.disclaimers.find(params[:id])
     pdf = Prawn::Document.new
-    pdf.text @disclaimer.statement
+    pdf.text "Conversation Transcript", size: 16, style: :bold
+    pdf.move_down 10
+  
+    @disclaimer.chat_history.each do |msg|
+      role = msg["role"].capitalize
+      content = msg["content"]
+      pdf.text "#{role}: #{content}"
+      pdf.move_down 8
+    end
+  
     send_data pdf.render,
-              filename: "disclaimer_#{@disclaimer.id}.pdf",
-              type: "application/pdf",
-              disposition: "attachment"
+      filename: "disclaimer_#{@disclaimer.id}.pdf",
+      type: "application/pdf",
+      disposition: "attachment"
   end
+  
 
 
   def download_text_file
