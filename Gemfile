@@ -52,6 +52,9 @@ gem 'prawn'
 
 gem 'pg'
 
+gem 'wicked_pdf'
+gem 'wkhtmltopdf-binary'
+
  
 
 
