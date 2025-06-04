@@ -1,27 +1,35 @@
 class DisclaimersController < ApplicationController
   require 'openai'
 
-  before_action :authenticate_user!, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+ 
 
 
+  # def index
+  #   @disclaimer = Disclaimer.new
 
-  def index
-    @disclaimer = Disclaimer.new
-
-    @disclaimers = current_user.disclaimers
-
-    @latest_disclaimer = Disclaimer.order(created_at: :desc).first
+ 
+  #   @latest_disclaimer = Disclaimer.order(created_at: :desc).first
 
 
-    respond_to do |format|
-      format.html 
-      format.json {render json:@disclaimers}
-    end
+  #   respond_to do |format|
+  #     format.html 
+  #     format.json {render json:@disclaimers}
+  #   end
+
+  # end
+
+ 
+  def index 
+
+    @disclaimers = Disclaimer.all 
 
   end
 
+
+
+
   def show
-    @disclaimer = current_user.disclaimers.find(params[:id])
+    @disclaimer = Disclaimer.find(params[:id])
 
     respond_to do |format|
     format.html 
@@ -43,14 +51,15 @@ class DisclaimersController < ApplicationController
  
 
     @disclaimer =  existing ||  Disclaimer.new(disclaimer_params)
-    @disclaimer.user = current_user
-
+ 
 
  
 
     client = OpenAI::Client.new(access_token: ENV['OPENAI_API_KEY'])
 
     raw_message_array = params[:disclaimer][:message]
+
+   
 
     if raw_message_array.is_a?(Array)
       user_input = raw_message_array.reverse.find { |m| m["role"] == "user" || m[:role] == "user" }&.dig("content") || ""
@@ -64,6 +73,8 @@ prompt = "Write a professional legal disclaimer about this topic: #{user_input}.
 
 
 user_message = [{ role: "user", content: prompt }]
+
+ 
 
 chat_history = existing&.chat_history || [
   { role: "system", content: "You are a legal assistant bot. Only write compliance-based disclaimers using legal tone and risk language." }
@@ -90,9 +101,11 @@ chat_history = existing&.chat_history || [
   content: generated_statement
 }
 
+ 
 
 full_history = messages + [assistant_message]
 
+ 
 @disclaimer.chat_history = full_history
 
 
@@ -106,7 +119,8 @@ full_history = messages + [assistant_message]
 
   
     
-
+    puts "@disclaimer valid?: #{@disclaimer.valid?}"
+    puts "@disclaimer errors: #{@disclaimer.errors.full_messages}"
  
     
 
@@ -128,64 +142,64 @@ full_history = messages + [assistant_message]
 
 
 
-  def edit
-    @disclaimer = current_user.disclaimers.find(params[:id])
+  # def edit
+  #   @disclaimer = Disclaimer.find(params[:id])
 
-    respond_to do |format|
-      format.html # 
-      format.json { render json: @disclaimer }
-    end
+  #   respond_to do |format|
+  #     format.html # 
+  #     format.json { render json: @disclaimer }
+  #   end
 
  
-  end
+  # end
 
 
-  def update
-    @disclaimer = current_user.disclaimers.find(params[:id])
+  # def update
+  #   @disclaimer = Disclaimer.find(params[:id])
 
-    if @disclaimer.update(disclaimer_params)
+  #   if @disclaimer.update(disclaimer_params)
 
-      respond_to do |format|
-        format.json { render json: @disclaimer }
+  #     respond_to do |format|
+  #       format.json { render json: @disclaimer }
 
-        format.turbo_stream {redirect_to dashboard_path, status: :see_other}
-        format.html {redirect_to dashboard_path, notice: "Disclaimer Updated"}
-      end
-    else
-      respond_to do |format|
-        format.json { render json: @disclaimer.errors, status: :unprocessable_entity }
+  #       format.turbo_stream {redirect_to dashboard_path, status: :see_other}
+  #       format.html {redirect_to dashboard_path, notice: "Disclaimer Updated"}
+  #     end
+  #   else
+  #     respond_to do |format|
+  #       format.json { render json: @disclaimer.errors, status: :unprocessable_entity }
 
-        format.turbo_stream {render :edit, status: :unprocessable_entity}
-        format.html {render :edit, status: :unprocessable_entity}
-      end
-
-
-    end
+  #       format.turbo_stream {render :edit, status: :unprocessable_entity}
+  #       format.html {render :edit, status: :unprocessable_entity}
+  #     end
 
 
-  end
+  #   end
 
 
-
+  # end
 
 
 
-  def destroy
-    @disclaimer = current_user.disclaimers.find(params[:id])
 
-    @disclaimer.destroy 
 
-    respond_to do |format|
-      format.turbo_stream {redirect_to dashboard_path, status: :see_other}
-      format.html {redirect_to dashboard_path, status:  :see_other}
-    end
+
+  # def destroy
+  #   @disclaimer = Disclaimer.find(params[:id])
+
+  #   @disclaimer.destroy 
+
+  #   respond_to do |format|
+  #     format.turbo_stream {redirect_to dashboard_path, status: :see_other}
+  #     format.html {redirect_to dashboard_path, status:  :see_other}
+  #   end
  
 
 
-  end
+  # end
 
   def continue 
-    @disclaimer = current_user.disclaimers.find(params[:id])
+    @disclaimer = Disclaimer.find(params[:id])
 
     prompt = "Write a legal disclaimer about #{params[:disclaimer][:message]}."
 
@@ -243,7 +257,7 @@ render json: @disclaimer, status: :ok
 
 
   def download_pdf
-    @disclaimer = current_user.disclaimers.find(params[:id])
+    @disclaimer = Disclaimer.find(params[:id])
     pdf = Prawn::Document.new
     pdf.text "Conversation Transcript", size: 16, style: :bold
     pdf.move_down 10
@@ -265,7 +279,7 @@ render json: @disclaimer, status: :ok
 
   def download_text_file
 
-    @disclaimer = current_user.disclaimers.find(params[:id])
+    @disclaimer = Disclaimer.find(params[:id])
     text = <<~TEXT
     Prompt: #{@disclaimer.message}
     Statement: #{@disclaimer.statement}
@@ -285,6 +299,7 @@ render json: @disclaimer, status: :ok
 
   def disclaimer_params
     params.require(:disclaimer).permit(
+      :user_id,
       :topic,
       :tone,
       :prompt,
