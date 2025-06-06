@@ -257,6 +257,8 @@ render json: @disclaimer, status: :ok
 
 
   def download_pdf
+
+    puts "downloading"
     @disclaimer = Disclaimer.find(params[:id])
     pdf = Prawn::Document.new
     pdf.text "Conversation Transcript", size: 16, style: :bold
