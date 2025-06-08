@@ -6,15 +6,19 @@ FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
 WORKDIR /rails
 
-# Base stage - install runtime dependencies only
+# Base stage - install runtime dependencies
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
       curl \
+      git \                    # <== Add this line
       libjemalloc2 \
       libvips \
       wkhtmltopdf \
-      libpq5 && \
+      libpq5 \
+      libpq-dev \
+      postgresql-client && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
 
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
