@@ -29,16 +29,7 @@ FROM base AS build
 
 # Install build dependencies (split for better caching and debugging)
 # In your build stage:
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y \
-      libpq-dev \
-      postgresql-client \
-      build-essential \
-      git \
-      libyaml-dev \
-      pkg-config && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
-
+ 
 
 # Verify pg_config is available (debugging step)
 RUN which pg_config || echo "pg_config not found" && \
