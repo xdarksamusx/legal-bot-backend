@@ -13,8 +13,11 @@ RUN apt-get update -qq && \
       libjemalloc2 \
       libvips \
       wkhtmltopdf \
-      libpq5 && \
+      libpq5 \
+      libpq-dev \
+      postgresql-client && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
 
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
