@@ -12,7 +12,6 @@ RUN apt-get update -qq && \
       libjemalloc2 \
       libvips \
       wkhtmltopdf \
-      libpq5 \
       postgresql-client && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
@@ -28,22 +27,26 @@ FROM base AS build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
       build-essential \
+      git \
       libpq-dev \
       libyaml-dev \
-      pkg-config && \
+      pkg-config \
+      nodejs \
+      yarn && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
-# Install gems
+# Install gems and JS dependencies
 COPY Gemfile Gemfile.lock ./
 RUN gem install bundler:2.6.8 && \
     bundle _2.6.8_ install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
+COPY package.json yarn.lock ./
+RUN yarn install --check-files
 
-# App code
+# Precompile assets and bootsnap
 COPY . .
-
-# Precompile bootsnap (no assets yet)
-RUN bundle exec bootsnap precompile app/ lib/
+RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile && \
+    bundle exec bootsnap precompile app/ lib/
 
 # Runtime stage
 FROM base
@@ -57,8 +60,8 @@ RUN groupadd --system --gid 1000 rails && \
 
 USER rails:rails
 
-# Precompile assets at runtime with proper environment variables
-CMD ["sh", "-c", "bundle exec rails assets:precompile && ./bin/thrust ./bin/rails server"]
+# Start server
+CMD ["./bin/thrust", "./bin/rails", "server", "-b", "0.0.0.0", "-p", 80]
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:80/up || exit 1
