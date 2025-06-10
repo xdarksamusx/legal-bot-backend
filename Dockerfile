@@ -63,7 +63,7 @@ RUN groupadd --system --gid 1000 rails && \
 USER rails:rails
 
 # Start server
-CMD ["./bin/thrust", "./bin/rails", "server", "-b", "0.0.0.0", "-p", 80]
+CMD ["./bin/thrust", "./bin/rails", "server", "-b", "0.0.0.0", "-p", "80"]
 
 # Simplified HEALTHCHECK on a single line
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl -f http://localhost/ || exit 1
