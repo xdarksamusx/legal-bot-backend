@@ -42,9 +42,8 @@ RUN gem install bundler:2.6.8 && \
 # App code
 COPY . .
 
-# Precompile application code and assets
-RUN bundle exec bootsnap precompile app/ lib/ && \
-    SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=production bundle exec rails assets:precompile
+# Precompile bootsnap (no assets yet)
+RUN bundle exec bootsnap precompile app/ lib/
 
 # Runtime stage
 FROM base
@@ -58,9 +57,11 @@ RUN groupadd --system --gid 1000 rails && \
 
 USER rails:rails
 
+# Precompile assets at runtime with proper environment variables
+CMD ["sh", "-c", "bundle exec rails assets:precompile && ./bin/thrust ./bin/rails server"]
+
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:80/up || exit 1
 
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 EXPOSE 80
-CMD ["./bin/thrust", "./bin/rails", "server"]
