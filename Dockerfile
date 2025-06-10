@@ -52,7 +52,10 @@ RUN gem install bundler:2.6.8 && \
 COPY . .
 
 RUN bundle exec bootsnap precompile app/ lib/
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+
+# Use a dummy SECRET_KEY_BASE to satisfy production mode
+ENV SECRET_KEY_BASE=dummy
+RUN ./bin/rails assets:precompile
 
 # Runtime stage
 FROM base
