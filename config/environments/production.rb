@@ -1,11 +1,13 @@
 require "active_support/core_ext/integer/time"
 
 
-abort("🛑 Running in #{Rails.env} mode — aborting to verify environment!")
+# abort("🛑 Running in #{Rails.env} mode — aborting to verify environment!")
 
 
 #expermenting
 Rails.application.configure do
+  config.require_master_key = false
+
   # Settings specified here will take precedence over those in config/application.rb.
  #experimenting 
   # Code is not reloaded between requests.
