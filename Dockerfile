@@ -1,12 +1,14 @@
 # syntax=docker/dockerfile:1
 
+ARG CACHE_BUST=$(date +%s)
 ARG RUBY_VERSION=3.4.2
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
 WORKDIR /rails
 
 # Base stage - install runtime dependencies only
-RUN apt-get update -qq && \
+RUN echo $CACHE_BUST && \
+    apt-get update -qq && \
     apt-get install --no-install-recommends -y \
       curl \
       libjemalloc2 \
@@ -61,4 +63,11 @@ RUN groupadd --system --gid 1000 rails && \
 USER rails:rails
 
 # Start server
-CMD ["./bin/thrust", "./bin/rails", "server", "-b",
+CMD ["./bin/thrust", "./bin/rails", "server", "-b", "0.0.0.0", "-p", 80]
+
+# Fixed HEALTHCHECK
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+  CMD-SHELL ["curl -f http://localhost:80/up || exit 1"]
+
+ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+EXPOSE 80
