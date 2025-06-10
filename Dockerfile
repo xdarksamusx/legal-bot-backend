@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 
 ARG CACHE_BUST=$(date +%s)
-ARG RUBY_VERSION=3.4.2
-FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
+ARG RUBY_VERSION=3.3.1
+FROM ruby:${RUBY_VERSION}-slim AS base
 
 WORKDIR /rails
 
