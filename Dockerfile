@@ -54,8 +54,8 @@ COPY . .
 RUN bundle exec bootsnap precompile app/ lib/
 
 # Use a dummy SECRET_KEY_BASE to satisfy production mode
-ENV SECRET_KEY_BASE=dummy
-RUN ./bin/rails assets:precompile
+RUN RAILS_ENV=development ./bin/rails assets:precompile
+
 
 # Runtime stage
 FROM base
