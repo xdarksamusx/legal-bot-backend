@@ -1,8 +1,7 @@
 require "active_support/core_ext/integer/time"
 
 
-# abort("🛑 Running in #{Rails.env} mode — aborting to verify environment!")
-
+ 
 
 #expermenting
 Rails.application.configure do
