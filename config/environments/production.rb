@@ -6,16 +6,17 @@ require "active_support/core_ext/integer/time"
 
 #expermenting
 Rails.application.configure do
-  config.require_master_key = false
+  config.eager_load = true
 
+  RUN SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=production bundle exec rails assets:precompile
+
+ 
   # Settings specified here will take precedence over those in config/application.rb.
  #experimenting 
   # Code is not reloaded between requests.
   config.enable_reloading = false
 
-  # Eager load code on boot for better performance and memory savings (ignored by Rake tasks).
-  config.eager_load = false
-
+  
   # Full error reports are disabled.
   config.consider_all_requests_local = false
 
