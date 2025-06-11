@@ -42,9 +42,7 @@ COPY Gemfile Gemfile.lock ./
 RUN gem install bundler:2.6.8 && \
     bundle _2.6.8_ install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
-COPY package.json yarn.lock ./
-RUN yarn install --check-files
-
+ 
 # Precompile assets and bootsnap
 COPY . .
 RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile && \
@@ -63,7 +61,7 @@ RUN groupadd --system --gid 1000 rails && \
 USER rails:rails
 
 # Start server
-CMD ["./bin/thrust", "./bin/rails", "server", "-b", "0.0.0.0", "-p", "80"]
+CMD ["./bin/thrust", "./bin/rails", "server", "-b", "0.0.0.0", "-p", "3000"]
 
 # Simplified HEALTHCHECK on a single line
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl -f http://localhost/ || exit 1
