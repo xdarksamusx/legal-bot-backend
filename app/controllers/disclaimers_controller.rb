@@ -2,7 +2,7 @@ class DisclaimersController < ApplicationController
   require 'openai'
 
  
-
+#####   changes    ######
 
   # def index
   #   @disclaimer = Disclaimer.new
@@ -31,10 +31,8 @@ class DisclaimersController < ApplicationController
   def show
     @disclaimer = Disclaimer.find(params[:id])
 
-    respond_to do |format|
-    format.html 
-    format.json {render json:@disclaimer}
-    end
+    render json: @disclaimer
+
   end
 
 
@@ -119,25 +117,17 @@ full_history = messages + [assistant_message]
 
   
     
-    puts "@disclaimer valid?: #{@disclaimer.valid?}"
-    puts "@disclaimer errors: #{@disclaimer.errors.full_messages}"
  
     
 
 
  
-    if @disclaimer.save 
-      respond_to do |format |
-        format.html {redirect_to disclaimers_path(disclaimer_id:@disclaimer.id)}
-
-        format.json {render json: @disclaimer, status: :created}
-      end
+    if @disclaimer.save
+      render json: @disclaimer, status: :created
     else
-      respond_to do |format|
-        format.html { render :index, status: :unprocessable_entity }
-        format.json { render json: @disclaimer.errors, status: :unprocessable_entity }
-      end     
-    end
+      render json: { errors: @disclaimer.errors.full_messages }, status: :unprocessable_entity
+    end 
+    
   end
 
 
@@ -245,10 +235,11 @@ full_history = messages + [assistant_message]
  
 @disclaimer.statement = generated_statement
 
-
-@disclaimer.save!
-render json: @disclaimer, status: :ok 
-
+if @disclaimer.save
+  render json: @disclaimer, status: :ok
+else
+  render json: { errors: @disclaimer.errors.full_messages }, status: :unprocessable_entity
+end
 
 
 
