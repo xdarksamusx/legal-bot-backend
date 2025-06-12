@@ -3,6 +3,8 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Enable eager loading for production
   config.eager_load = true
+  config.allowed_cors_origins = ['https://independent-fulfillment-production.up.railway.app']
+
 
   # Settings specified here will take precedence over those in config/application.rb
   # Code is not reloaded between requests
